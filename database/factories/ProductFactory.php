@@ -19,4 +19,17 @@ class ProductFactory extends Factory
             'vat_percentage' => $this->faker->randomElement([0, 6, 12, 21]),
         ];
     }
+
+    public function withAttributes($cities, $categories): ProductFactory
+    {
+        return $this->afterCreating(function ($product) use ($cities, $categories) {
+            for ($i = 0; $i < random_int(1, 10); $i++) {
+                $product->cities()->create(['name' => $this->faker->randomElement($cities)]);
+            }
+
+            for ($i = 0; $i < random_int(1, 5); $i++) {
+                $product->categories()->create(['name' => $this->faker->randomElement($categories)]);
+            }
+        });
+    }
 }

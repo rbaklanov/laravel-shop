@@ -3,10 +3,11 @@
 @endphp
 
 <x-app-layout title="Products">
+    <x-search-line :cities="$cities" :categories="$categories" :city="$city" :category="$category"></x-search-line>
     <div class="grid grid-cols-3 gap-12">
         @foreach($products as $product)
-            <x-product 
-                :title="$product->name" 
+            <x-product
+                :title="$product->name"
                 :price="format_money($product->getItemPrice()->pricePerItemIncludingVat())"
                 :actionUrl="action(\App\Http\Controllers\Cart\AddCartItemController::class, [$product])"
           />

@@ -8,13 +8,27 @@ use App\Domain\Coupon\Coupon;
 use App\Domain\Customer\Customer;
 use App\Domain\Product\Product;
 use App\Models\User;
+use Faker\Generator as Faker;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run(): void
+    public function run(Faker $faker): void
     {
-        $products = Product::factory(100)->create();
+        $cities = [];
+        $categories = [];
+
+        foreach (range(0, 30) as $index) {
+            $cities[] = $faker->city();
+        }
+
+        foreach (range(0, 100) as $index) {
+            $categories[] = $faker->word();
+        }
+
+        for ($i = 0; $i < 500; $i++) {
+            $products = Product::factory(100)->withAttributes($cities, $categories)->create();
+        }
 
         Coupon::factory()->create();
 

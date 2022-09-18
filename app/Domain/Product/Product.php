@@ -2,11 +2,13 @@
 
 namespace App\Domain\Product;
 
+use App\Domain\Filter\Filter;
 use App\Domain\Inventory\Projections\Inventory;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Product extends Model
 {
@@ -17,6 +19,8 @@ class Product extends Model
     protected $casts = [
         'manages_inventory' => 'boolean',
     ];
+
+    protected ?string $morphClass = null;
 
     protected static function newFactory(): ProductFactory
     {
@@ -51,5 +55,33 @@ class Product extends Model
     public function hasAvailableInventory(int $requestedAmount): bool
     {
         return $this->inventory->amount >= $requestedAmount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMorphClass()
+    {
+        return $this->morphClass ?: self::class;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function cities(): MorphMany
+    {
+        $this->morphClass = 'App/Domain/City';
+
+        return $this->morphMany(Filter::class, 'filterable');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function categories(): MorphMany
+    {
+        $this->morphClass = 'App/Domain/Category';
+
+        return $this->morphMany(Filter::class, 'filterable');
     }
 }
